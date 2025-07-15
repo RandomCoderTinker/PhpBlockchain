@@ -1,0 +1,42 @@
+{
+  "name": "blockchain/evm-layer2",
+  "description": "Modular EVM-compatible Layer 2 blockchain with DPoS, smart contracts, and gasless transactions.",
+  "version": "1.0.0",
+  "type": "project",
+  "license": "MIT",
+  "authors": [
+    {
+      "name": "Random Dev"
+    }
+  ],
+  "require": {
+    "php": ">=8.1",
+    "ext-curl": "*",
+    "ext-hash": "*",
+    "ext-json": "*",
+    "ext-mbstring": "*",
+    "ext-openssl": "*",
+    "ext-pdo": "*",
+    "kornrunner/keccak": "^1.1",
+    "vlucas/phpdotenv": "^5.0"
+  },
+  "suggest": {
+    "ext-pdo_mysql": "For MySQL PDO support",
+    "ext-gmp": "For big integer operations",
+    "ext-redis": "For caching and session storage"
+  },
+  "require-dev": {
+    "phpunit/phpunit": "^9.5"
+  },
+  "autoload": {
+    "psr-4": {
+      "Chain\\": "Chain"
+    }
+  },
+  "config": {
+    "optimize-autoloader": true,
+    "sort-packages": true
+  },
+  "minimum-stability": "stable",
+  "prefer-stable": true
+}
