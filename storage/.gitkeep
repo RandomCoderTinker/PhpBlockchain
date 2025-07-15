@@ -1,0 +1,11 @@
+# Storage directory for blockchain data
+# This directory will contain:
+# - blockchain/ - blockchain blocks and state
+# - state/ - current state data
+# - contracts/ - smart contract storage
+# - backups/ - automatic backups
+# - word_list.txt - The official BIP39 word list of 2048 unique English words
+# - const.config.php - The automatic config file that is made by the chain
+
+
+# This file ensures the directory structure is maintained in git

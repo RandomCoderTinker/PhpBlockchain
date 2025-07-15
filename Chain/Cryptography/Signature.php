@@ -1,4 +1,9 @@
 <?php
+/*
+ * Copyright (c) 2025. ChainBase Project
+ *  This file is part of ChainBase, a PHP-based EVM-compatible Layer 2 blockchain framework.
+ *  Licensed under the MIT License. See the LICENSE file for details.
+ */
 
 namespace Chain\Cryptography;
 
@@ -18,8 +23,8 @@ class Signature
      *   2) ECDSA/secp256k1 signing → (r, s, v)
      *   3) Concatenates and returns signature as 0x⟪r(32)⟫⟪s(32)⟫⟪v(1)⟫
      *
-     * @param string $message        The plain UTF-8 message to sign.
-     * @param string $privateKeyHex  The private key in hex format (without 0x).
+     * @param string $message The plain UTF-8 message to sign.
+     * @param string $privateKeyHex The private key in hex format (without 0x).
      *
      * @return array{
      *     r: string,
@@ -62,9 +67,9 @@ class Signature
      *
      * The signature must be in the format: 0x⟪r(32)⟫⟪s(32)⟫⟪v(1)⟫
      *
-     * @param string $message        The original UTF-8 message that was signed.
-     * @param string $signatureHex   The hex-encoded signature (130 chars or 0x-prefixed).
-     * @param string $publicKeyHex   The public key in hex format (without 0x).
+     * @param string $message The original UTF-8 message that was signed.
+     * @param string $signatureHex The hex-encoded signature (130 chars or 0x-prefixed).
+     * @param string $publicKeyHex The public key in hex format (without 0x).
      *
      * @return bool True if the signature is valid, false otherwise.
      */
@@ -101,8 +106,8 @@ class Signature
      * Uses the signature to reconstruct the public key, then derives
      * the Ethereum address by Keccak-256 hashing the public key and taking the last 20 bytes.
      *
-     * @param string $message        The original signed message.
-     * @param string $signatureHex   The signature in hex format (130 chars or 0x-prefixed).
+     * @param string $message The original signed message.
+     * @param string $signatureHex The signature in hex format (130 chars or 0x-prefixed).
      *
      * @return string|null The recovered Ethereum address (0x-prefixed), or null if recovery fails.
      */

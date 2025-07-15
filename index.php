@@ -1,9 +1,18 @@
 <?php
+/*
+ * Copyright (c) 2025. ChainBase Project
+ *  This file is part of ChainBase, a PHP-based EVM-compatible Layer 2 blockchain framework.
+ *  Licensed under the MIT License. See the LICENSE file for details.
+ */
 
 require "vendor/autoload.php";
 
+use Chain\Config\Config;
 use Chain\Wallet\WalletManager;
 use Chain\Cryptography\Signature;
+
+// Generate the config file
+$config = new Config();
 
 // Instantiate the WalletManager (handles key generation, address derivation, etc.)
 $wallet = new WalletManager();
