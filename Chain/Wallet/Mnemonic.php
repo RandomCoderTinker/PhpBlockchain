@@ -27,10 +27,10 @@ class Mnemonic
 	/**
 	 * Generate a 12-word BIP-39 compliant mnemonic phrase.
 	 *
-	 * @return array[] Array of 12 words representing the mnemonic phrase
+	 * @return string Array of 12 words representing the mnemonic phrase
 	 * @throws \Exception If the word list file cannot be read
 	 */
-	public static function generate(): array
+	public static function generate(): string
 	{
 		if (empty(self::$wordList)) {
 			self::$wordList = explode(
@@ -49,10 +49,10 @@ class Mnemonic
 
 		foreach ($chunks as $chunk) {
 			$idx = bindec($chunk);
-			$mnemonic[] = self::$wordList[$idx];
+			$mnemonic[] = preg_replace('/\s+/', ' ', trim(self::$wordList[$idx]));
 		}
 
-		return $mnemonic;
+		return implode(' ', $mnemonic);
 	}
 
 	/**

@@ -8,8 +8,9 @@
 namespace Chain\Transaction;
 
 use kornrunner\Keccak;
+use Chain\Interfaces\TransactionInterface;
 
-class Transaction
+class Transaction implements TransactionInterface
 {
 
 	/**

@@ -9,6 +9,7 @@ declare(strict_types=1);
 
 namespace Chain\Cryptography;
 
+use Chain\Utils\Hex;
 use kornrunner\Keccak;
 use kornrunner\Secp256k1;
 use Mdanter\Ecc\Crypto\Signature\Signature as EccSignature;
@@ -40,7 +41,7 @@ class Signature
 	public static function sign(string $message, string $privateKeyHex): array
 	{
 		// 1) hash it
-		$msgHash = Keccak::hash($message, 256);
+		$msgHash = Hex::keccak256($message);
 
 		// 2) ask secp256k1 to sign
 		$secp = new Secp256k1();
@@ -93,7 +94,7 @@ class Signature
 		$signatureObj = new EccSignature($rGmp, $sGmp);
 
 		// re-hash the message
-		$msgHash = Keccak::hash($message, 256);
+		$msgHash = Hex::keccak256($message);
 
 		// verify via secp256k1
 		$secp = new Secp256k1();
@@ -135,7 +136,8 @@ class Signature
 		$generator = EccFactory::getSecgCurves()->generator256k1();
 		$n = $generator->getOrder();
 
-		$e = gmp_init(Keccak::hash($message, 256), 16);
+		$hashBin = hex2bin(Hex::strip(Hex::keccak256($message)));
+		$e = gmp_init(bin2hex($hashBin), 16);  // OR just: gmp_import($hashBin)
 
 		// Reconstruct R point from r and v
 		$x = $r;
@@ -167,9 +169,9 @@ class Signature
 		$yHex = str_pad(gmp_strval($Q->getY(), 16), 64, '0', STR_PAD_LEFT);
 		$pubKeyHex = $xHex . $yHex; // Fixed: Removed '04' prefix
 
-		$keccak = Keccak::hash(hex2bin($pubKeyHex), 256);
+		$keccak = Hex::keccak256NoPrefix(hex2bin($pubKeyHex));
 
-		return '0x' . substr($keccak, 24);
+		return "0x" . substr($keccak, 24);
 	}
 
 }

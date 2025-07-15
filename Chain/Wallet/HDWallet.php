@@ -31,25 +31,19 @@ class HDWallet
 	 */
 	public static function derivePrivateKeyFromMnemonic(string $mnemonic, string $passphrase = ''): string
 	{
-		// 1) BIP-39 seed
-		$salt = 'mnemonic' . $passphrase;
-		$seed = hash_pbkdf2('sha512', $mnemonic, $salt, 2048, 64, TRUE);
-
-		// 2) Master key & chain code = HMAC-SHA512("Bitcoin seed", seed)
-		$I = hash_hmac('sha512', $seed, 'Bitcoin seed', TRUE);
+		$seed = Mnemonic::toSeed($mnemonic, $passphrase);
+		$I = hash_hmac('sha512', $seed, 'Bitcoin seed', TRUE); // Fix: swap data and key
 		$k = substr($I, 0, 32);  // master private key
 		$c = substr($I, 32, 32); // master chain code
 
-		// 3) Derivation path indices
 		$path = [
 			44 | 0x80000000,  // 44'
 			60 | 0x80000000,  // 60'
-			0 | 0x80000000,  // 0'
+			0 | 0x80000000,   // 0'
 			0,                // change = 0
-			0,                 // address_index = 0
+			0,                // address_index = 0
 		];
 
-		// 4) Walk path
 		foreach ($path as $index) {
 			[$k, $c] = self::ckdPriv($k, $c, $index);
 		}

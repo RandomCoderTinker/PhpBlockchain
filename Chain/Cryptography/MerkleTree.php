@@ -9,6 +9,7 @@ declare(strict_types=1);
 
 namespace Chain\Cryptography;
 
+use Chain\Utils\Hex;
 use kornrunner\Keccak;
 use Chain\Transaction\Transaction;
 
@@ -76,7 +77,7 @@ class MerkleTree
 						throw new \InvalidArgumentException("Failed to JSON-encode item at index $index");
 					}
 				}
-				$this->leaves[] = Keccak::hash('LEAF' . $item, 256);
+				$this->leaves[] = Hex::keccak256('LEAF' . $item);
 			} catch (\Exception $e) {
 				throw new \InvalidArgumentException("Invalid data item at index $index: " . $e->getMessage());
 			}
@@ -90,7 +91,7 @@ class MerkleTree
 			for ($i = 0; $i < count($currentLevel); $i += 2) {
 				$left = $currentLevel[$i];
 				$right = $currentLevel[$i + 1] ?? $left; // Duplicate last node if odd count
-				$nextLevel[] = Keccak::hash('MERKLE' . $left . $right, 256);
+				$nextLevel[] = Hex::keccak256('MERKLE' . $left . $right);
 			}
 			$currentLevel = $nextLevel;
 			$this->tree[] = $currentLevel;
@@ -187,13 +188,13 @@ class MerkleTree
 				throw new \InvalidArgumentException("Invalid proof direction: {$direction}");
 			}
 
-			$currentHash = Keccak::hash(
+			$currentHash = Hex::keccak256(
 				'MERKLE' .
 				($direction === 'left'
 					? $siblingHash . $currentHash
-					: $currentHash . $siblingHash),
-				256
+					: $currentHash . $siblingHash)
 			);
+
 		}
 
 		return $currentHash === $root;
@@ -271,7 +272,7 @@ class MerkleTree
 	 */
 	public static function combineRoots(string $leftRoot, string $rightRoot): string
 	{
-		return Keccak::hash('MERKLE' . $leftRoot . $rightRoot, 256);
+		return Hex::keccak256('MERKLE' . $leftRoot . $rightRoot);
 	}
 
 	/**
@@ -292,7 +293,7 @@ class MerkleTree
 			if (is_array($tx) || is_object($tx)) {
 				$tx = json_encode(self::normalize($tx), JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES | JSON_NUMERIC_CHECK | JSON_PRESERVE_ZERO_FRACTION);
 			}
-			$leaf = Keccak::hash('LEAF' . $tx, 256);
+			$leaf = Hex::keccak256('LEAF' . $tx);
 
 			$proof = $tree->getProof($i);
 
@@ -304,6 +305,15 @@ class MerkleTree
 		}
 
 		return TRUE;
+	}
+
+	public static function hashLeaf($data): string
+	{
+		if (is_array($data) || is_object($data)) {
+			$data = json_encode(self::normalize($data), JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES | JSON_NUMERIC_CHECK | JSON_PRESERVE_ZERO_FRACTION);
+		}
+
+		return Hex::keccak256('LEAF' . $data);
 	}
 
 	/**
@@ -319,7 +329,7 @@ class MerkleTree
 			return FALSE;
 		}
 
-		$expectedHash = Keccak::hash('LEAF' . $data, 256);
+		$expectedHash = Hex::keccak256('LEAF' . $data);
 
 		return $this->leaves[$index] === $expectedHash;
 	}
@@ -371,7 +381,7 @@ class MerkleTree
 
 		foreach ($keyValuePairs as $key => $value) {
 			$keyBits = $this->toBinary((string)$key, $depth);
-			$valueHash = Keccak::hash('LEAF' . (string)$value, 256);
+			$valueHash = Hex::keccak256('LEAF' . (string)$value);
 			$root = $this->updateSparseTree($keyBits, $valueHash, 0, $defaultHashes);
 		}
 
@@ -390,7 +400,7 @@ class MerkleTree
 		$defaults[$depth] = str_repeat('0', 64); // Empty leaf
 
 		for ($i = $depth - 1; $i >= 0; $i--) {
-			$defaults[$i] = Keccak::hash('MERKLE' . $defaults[$i + 1] . $defaults[$i + 1], 256);
+			$defaults[$i] = Hex::keccak256('MERKLE' . $defaults[$i + 1] . $defaults[$i + 1]);
 		}
 
 		return $defaults;
@@ -446,7 +456,7 @@ class MerkleTree
 			$right = $this->updateSparseTree($keyBits, $valueHash, $nextDepth, $defaultHashes);
 		}
 
-		return Keccak::hash('MERKLE' . $left . $right, 256);
+		return Hex::keccak256('MERKLE' . $left . $right);
 	}
 
 }

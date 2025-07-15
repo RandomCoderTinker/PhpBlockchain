@@ -9,6 +9,7 @@ declare(strict_types=1);
 
 namespace Chain\Wallet;
 
+use Chain\Utils\Hex;
 use kornrunner\Keccak;
 
 class KeyPair
