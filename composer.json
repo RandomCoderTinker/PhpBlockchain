@@ -17,6 +17,7 @@
     "ext-mbstring": "*",
     "ext-openssl": "*",
     "ext-pdo": "*",
+    "ext-bcmath": "*",
     "kornrunner/keccak": "^1.1",
     "kornrunner/secp256k1": "^0.3.0",
     "vlucas/phpdotenv": "^5.0"
