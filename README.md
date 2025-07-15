@@ -21,7 +21,7 @@
 
 ## 🙌 Support Development
 
-If you find this project useful or want to help fund the Rotten Legacy chain, feel free to send a donation:
+If you find this project useful or want to help fund the ChainBase, feel free to send a donation:
 
 **💸 Donations welcome:** 0x29Bf0f30098139e8F4F8cd06B809FCfCDa5E04B4
 
