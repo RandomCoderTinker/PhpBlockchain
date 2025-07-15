@@ -10,8 +10,9 @@
 
 ## 💬 Support
 
-- GitHub Issues: [Report bugs](https://github.com/RandomCoderTinker/PhpBlockchain/issues)
+- Test Documentation: [Test Docs](https://github.com/RandomCoderTinker/PhpBlockchain/tree/master/Tests)
 - Documentation: [Wiki](https://github.com/RandomCoderTinker/PhpBlockchain/wiki)
+- GitHub Issues: [Report bugs](https://github.com/RandomCoderTinker/PhpBlockchain/issues)
 
 ---
 

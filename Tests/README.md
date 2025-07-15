@@ -1,8 +1,8 @@
-# Files
+# Test Files and Expected output
 
 ## TestWallet.php
 
-As of now, the mnemonic is incorrect and wont import MetaMask Correctly
+As of now, the mnemonic is incorrect and wont import to MetaMask Correctly
 
 ```php
 Expected Output:
@@ -130,6 +130,7 @@ TX #4: "tx5: Bob -> Alice (0.1)"
 ## TestCryptoUtils.php
 
 Tests the utils of converting tokens to and from WEI with basic math functions
+Then runs a Fuzz Testing 50 times on random generated numbers.
 
 ```php
 Expected Output:
