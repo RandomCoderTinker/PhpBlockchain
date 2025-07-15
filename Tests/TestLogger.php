@@ -10,7 +10,7 @@ declare(strict_types=1);
 
 use Chain\Utils\Logger;
 
-require dirname(__DIR__, 1) . "/vendor/autoload.php";
+require dirname(__DIR__) . "/vendor/autoload.php";
 
 // Test Logger file
 Logger::getInstance()->error("This is an error");

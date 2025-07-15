@@ -10,7 +10,7 @@ declare(strict_types=1);
 
 use Chain\Utils\CryptoUnits;
 
-require dirname(__DIR__, 1) . "/vendor/autoload.php";
+require dirname(__DIR__) . "/vendor/autoload.php";
 
 /**
  * Outputs a formatted test result.
@@ -107,7 +107,14 @@ function runCryptoUnitsTests(): void
 /**
  * Runs a randomized fuzz test suite to catch edge cases.
  *
+ * This tests:
+ * - Decimal-to-wei conversion and reversibility
+ * - Arithmetic integrity (add, subtract, multiply, divide)
+ * - Proper base unit formatting
+ * - Precision safety (no truncation, no drift)
+ *
  * @param int $iterations Number of fuzz iterations to run
+ * @throws \Random\RandomException
  */
 function fuzzTestCryptoUnits(int $iterations = 20): void
 {
@@ -117,32 +124,49 @@ function fuzzTestCryptoUnits(int $iterations = 20): void
 	$fails = 0;
 
 	for ($i = 0; $i < $iterations; $i++) {
+		// Generate two random decimal strings with safe precision
 		$a = generateRandomDecimal();
 		$b = generateRandomDecimal(nonZero: TRUE);
 
 		try {
+			// Convert both to base unit (wei)
 			$aWei = CryptoUnits::toBaseUnit($a);
 			$bWei = CryptoUnits::toBaseUnit($b);
 
-			// Perform reverse tests and arithmetic
+			// Convert back to decimal
 			$aBack = CryptoUnits::fromBaseUnit($aWei);
 			$bBack = CryptoUnits::fromBaseUnit($bWei);
+
+			// Perform arithmetic
 			$add = CryptoUnits::add($aWei, $bWei);
-			$sub = CryptoUnits::subtract($add, $bWei);
+			$sub = CryptoUnits::subtract($add, $bWei); // should equal aWei
 			$cmp = CryptoUnits::compare($aWei, $bWei);
 			$div = CryptoUnits::divide($aWei, $bWei);
 			$mul = CryptoUnits::multiply($a, $b);
 
+			// Validate all results
 			$passed =
-				CryptoUnits::isBaseUnit($aWei)
-				&& CryptoUnits::isBaseUnit($bWei)
-				&& bccomp($sub, $aWei, 0) === 0
-				&& in_array($cmp, [-1, 0, 1], TRUE);
+				CryptoUnits::isBaseUnit($aWei) &&
+				CryptoUnits::isBaseUnit($bWei) &&
+				bccomp($sub, $aWei, 0) === 0 &&
+				in_array($cmp, [-1, 0, 1], TRUE) &&
+				bccomp(CryptoUnits::toBaseUnit($aBack), $aWei, 0) === 0 &&
+				bccomp(CryptoUnits::toBaseUnit($bBack), $bWei, 0) === 0 &&
+				preg_match('/^\d+$/', $mul) === 1 &&             // ensure multiply returns base unit
+				preg_match('/^\d+(\.\d+)?$/', $div) === 1;       // ensure divide returns valid decimal
 
 			if ($passed) {
 				$passes++;
 			} else {
-				echo "❌ Fuzz fail (case $i): $a ($aWei), $b ($bWei)\n";
+				echo "❌ Fuzz fail (case $i):\n";
+				echo "   a: $a ($aWei)\n";
+				echo "   b: $b ($bWei)\n";
+				echo "   aBack: $aBack\n";
+				echo "   bBack: $bBack\n";
+				echo "   add: $add\n";
+				echo "   sub: $sub\n";
+				echo "   mul: $mul\n";
+				echo "   div: $div\n";
 				$fails++;
 			}
 		} catch (Exception $e) {
@@ -155,18 +179,19 @@ function fuzzTestCryptoUnits(int $iterations = 20): void
 }
 
 /**
- * Generates a random decimal string for testing.
+ * Generates a safe decimal string with at most 18 digits of precision.
  *
  * @param bool $nonZero If true, guarantees the integer part is non-zero
- *
  * @return string A realistic random decimal value (up to 18 decimals)
+ * @throws \Random\RandomException
  */
 function generateRandomDecimal(bool $nonZero = FALSE): string
 {
-	$intPart = random_int($nonZero ? 1 : 0, 999999999999);
-	$fracPart = str_pad((string)random_int(0, 999999999999999999), random_int(1, 18), '0');
+	$intPart = random_int($nonZero ? 1 : 0, 999_999_999_999);
+	$fracDigits = random_int(1, 18);
+	$fracPart = str_pad((string)random_int(0, 10 ** $fracDigits - 1), $fracDigits, '0', STR_PAD_LEFT);
 
-	return $intPart . '.' . $fracPart;
+	return "$intPart.$fracPart";
 }
 
 // Run all deterministic and fuzz tests

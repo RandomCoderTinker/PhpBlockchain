@@ -7,7 +7,7 @@
  */
 declare(strict_types=1);
 
-require dirname(__DIR__, 1) . "/vendor/autoload.php";
+require dirname(__DIR__) . "/vendor/autoload.php";
 
 use Chain\Cryptography\Signature;
 use Chain\Wallet\WalletManager;
@@ -16,7 +16,11 @@ use Chain\Wallet\WalletManager;
 $wallet = new WalletManager();
 
 // === Create a new test wallet (with public/private key pair) ===
-$wallet = $wallet->createWallet();
+try {
+	$wallet = $wallet->createWallet();
+} catch (Exception $e) {
+	echo "Unable to create wallet: " . $e->getMessage();
+}
 print_r($wallet); // Outputs wallet details: address, public_key, private_key
 
 // === Message to be signed ===
