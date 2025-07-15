@@ -18,8 +18,10 @@
     "ext-openssl": "*",
     "ext-pdo": "*",
     "ext-bcmath": "*",
+    "ext-gmp": "*",
     "kornrunner/keccak": "^1.1",
     "kornrunner/secp256k1": "^0.3.0",
+    "kornrunner/rlp": "^0.3.6",
     "vlucas/phpdotenv": "^5.0"
   },
   "suggest": {
