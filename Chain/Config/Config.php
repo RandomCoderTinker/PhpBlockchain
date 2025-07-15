@@ -4,6 +4,7 @@
  *  This file is part of ChainBase, a PHP-based EVM-compatible Layer 2 blockchain framework.
  *  Licensed under the MIT License. See the LICENSE file for details.
  */
+declare(strict_types=1);
 
 namespace Chain\Config;
 
@@ -48,10 +49,6 @@ class Config
         }
 
         $this->config = require $this->configFile;
-
-        if (!is_array($this->config)) {
-            throw new \Exception("Invalid config file format");
-        }
     }
 
     /**
@@ -232,7 +229,7 @@ class Config
             $password = $this->get('database.password') ?? '';
             $database = $this->get('database.database') ?? '';
 
-            $dsn = "mysql:host={$host};port={$port};dbname={$database};charset=utf8mb4";
+            $dsn = "mysql:host=$host;port=$port;dbname=$database;charset=utf8mb4";
 
             $this->pdo = new \PDO($dsn, $username, $password);
             $this->pdo->setAttribute(\PDO::ATTR_ERRMODE, \PDO::ERRMODE_EXCEPTION);
