@@ -71,4 +71,52 @@ class Hex
 		return str_starts_with($hex, '0x') ? substr($hex, 2) : $hex;
 	}
 
+	/**
+	 * Encodes an array as JSON, then to hex (with 0x prefix).
+	 *
+	 * @param array $rawData
+	 * @return string Hex-encoded JSON, prefixed with "0x"
+	 * @throws \JsonException If JSON encoding fails
+	 */
+	public static function bin2hex(array $rawData): string
+	{
+		$json = \json_encode(
+			$rawData,
+			JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE | JSON_THROW_ON_ERROR
+		);
+
+		return '0x' . \bin2hex($json);
+	}
+
+	/**
+	 * Converts a converted hex back to array
+	 *
+	 * @param string $rawHex The hex string (with or without "0x" prefix)
+	 * @return array
+	 * @throws \InvalidArgumentException If the hex is invalid or JSON decoding fails
+	 */
+	public static function hex2bin(string $rawHex): array
+	{
+		// Strip 0x prefix if present
+		if (strpos($rawHex, '0x') === 0) {
+			$rawHex = substr($rawHex, 2);
+		}
+
+		// Convert hex to raw JSON string
+		$json = \hex2bin($rawHex);
+		if ($json === FALSE) {
+			throw new \InvalidArgumentException('Invalid hex string provided to hex2bin().');
+		}
+
+		// Decode JSON back to array
+		$data = \json_decode($json, TRUE, 512, JSON_THROW_ON_ERROR);
+
+		// Ensure it’s an array
+		if (!\is_array($data)) {
+			throw new \InvalidArgumentException('Decoded JSON is not an array.');
+		}
+
+		return $data;
+	}
+
 }

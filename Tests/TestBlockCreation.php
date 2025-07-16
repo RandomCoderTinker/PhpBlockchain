@@ -7,20 +7,68 @@
 
 declare(strict_types=1);
 
+require dirname(__DIR__) . "/vendor/autoload.php";
+
 use Chain\Blockchain\Block;
 use Chain\Blockchain\Blockchain;
-
-require dirname(__DIR__) . "/vendor/autoload.php";
+use Chain\Transaction\Transaction;
+use Chain\Wallet\WalletManager;
 
 echo "⛓️  Creating new blockchain...\n";
 
+$walletManager = new WalletManager();
+$wallets = [];
+
+// 1. Generate 10 wallets
+echo "� Generating wallets...\n";
+for ($i = 0; $i < 10; $i++) {
+	$wallets[] = $walletManager->createWallet();
+}
+
 $blockchain = new Blockchain();
-echo "➕ Adding blocks...\n";
 
-$blockchain->addBlock(new Block(0, [['from' => '0xAlice', 'to' => '0xBob', 'amount' => 10]], "0"));
-$blockchain->addBlock(new Block(1, [['from' => '0xBob', 'to' => '0xCarol', 'amount' => 25]], $blockchain->getBlock(0)->getHash()));
-$blockchain->addBlock(new Block(2, [['from' => '0xCarol', 'to' => '0xDave', 'amount' => 5]], $blockchain->getBlock(1)->getHash()));
+// 2. Generate 3 blocks with random transactions
+echo "➕ Generating blocks with random signed transactions...\n";
 
+$prevHash = "0";
+
+for ($blockIndex = 0; $blockIndex < 3; $blockIndex++) {
+	$txs = [];
+
+	// Create 5 transactions per block
+	for ($i = 0; $i < 5; $i++) {
+		$senderIndex = random_int(0, count($wallets) - 1);
+		$recipientIndex = random_int(0, count($wallets) - 1);
+		while ($recipientIndex === $senderIndex) {
+			$recipientIndex = random_int(0, count($wallets) - 1);
+		}
+
+		$sender = $wallets[$senderIndex];
+		$recipient = $wallets[$recipientIndex];
+
+		$tx = new Transaction(
+			$sender['address'],
+			$recipient['address'],
+			(string)random_int(1, 100),
+			random_int(1, 1000)
+		);
+		$tx->sign($sender['private_key']);
+
+		// Validate before adding
+		if (!$tx->verify($sender['public_key'])) {
+			echo "❌ Transaction signature failed verification.\n";
+			continue;
+		}
+
+		$txs[] = $tx->toArray();
+	}
+
+	$block = new Block($blockIndex, $txs, $prevHash);
+	$blockchain->addBlock($block);
+	$prevHash = $block->getHash();
+}
+
+// 3. Print block summaries
 echo "\n� Block Summary:\n";
 foreach ($blockchain->getAllBlocks() as $block) {
 	echo "Block #{$block->index}\n";
@@ -31,4 +79,5 @@ foreach ($blockchain->getAllBlocks() as $block) {
 	echo "  Timestamp    : " . date('Y-m-d H:i:s', $block->timestamp) . "\n\n";
 }
 
+// 4. Final validation
 echo "✅ Chain Valid? " . ($blockchain->isValid() ? "Yes" : "No") . "\n";

@@ -11,4 +11,20 @@ interface TransactionInterface
 {
 	public function getHash(): string;
 
+	public function getFrom(): string;
+
+	public function getTo(): string;
+
+	public function getAmount(): string;
+
+	public function getTimestamp(): int;
+
+	public function sign(string $privateKey): string;
+
+	public function verify(string $publicKey): bool;
+
+	public function isValid(): bool;
+
+	public function toArray(): array;
+
 }
