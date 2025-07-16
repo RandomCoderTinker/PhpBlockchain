@@ -9,5 +9,6 @@ namespace Chain\Interfaces;
 
 interface TransactionInterface
 {
+	public function getHash(): string;
 
 }

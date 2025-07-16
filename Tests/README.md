@@ -134,7 +134,7 @@ Tests creation of a Merkle Tree using fake TX's
 ```php
 Expected Output:
 
-? Merkle Tree Test Suite
+🌲 Merkle Tree Test Suite
 =============================
 🔧 Building Merkle Tree from 5 transactions...
 🔗 Merkle Root: 0x7570dc1be58415c8deab1d823b671e78224e4299d9a398f66e0896393a446fab
