@@ -231,7 +231,7 @@ Each file in `Tests/` exercises a core component of the ChainBase framework. Bel
     * Generates 1–5 random signed transactions between Alice and Bob.
     * Corrupts \~10% of signatures to simulate invalid TXs.
     * Filters out invalid transactions.
-    * Builds and signs the block (DPoS) with the validator.
+    * Builds and signs the block with a validator.
     * Prints block header (previous hash, Merkle root, timestamp, nonce, hash, validator, signature), total gas used &
       fees, and a per-TX line showing amount, fee, gas, and validity.
     * Validates the block against the previous hash and chains it if valid.
@@ -299,7 +299,7 @@ This output confirms:
 
 * Wallet setup
 * Transaction tampering and filtering
-* Per-block Merkle root, hashing, DPoS signature
+* Per-block Merkle root, hashing, signature
 * Gas & fee aggregation
 * Transaction validity
 * Block-level validity checks and chaining.
