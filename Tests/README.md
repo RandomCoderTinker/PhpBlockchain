@@ -224,39 +224,85 @@ Each file in `Tests/` exercises a core component of the ChainBase framework. Bel
 
 **What it does**
 
-* Initializes an empty blockchain.
-* Generates a batch of random signed transactions per block.
-* Creates and appends 3 blocks, logging each addition.
-* Prints a summary of each block’s header and verifies chain validity.
+* Initializes three wallets (Alice, Bob, Validator).
+* Picks a random number of blocks (3–15) to create.
+* For each block:
+
+    * Generates 1–5 random signed transactions between Alice and Bob.
+    * Corrupts \~10% of signatures to simulate invalid TXs.
+    * Filters out invalid transactions.
+    * Builds and signs the block (DPoS) with the validator.
+    * Prints block header (previous hash, Merkle root, timestamp, nonce, hash, validator, signature), total gas used &
+      fees, and a per-TX line showing amount, fee, gas, and validity.
+    * Validates the block against the previous hash and chains it if valid.
+
+---
 
 **How to run**
 
 ```bash
-  php Tests/TestBlockCreation.php
+php Tests/TestBlockCreation.php
 ```
+
+---
 
 **Key expected output**
+*(blockCount may vary; here shown with 6 blocks and one tamper event)*
 
+```text
+Alice Wallet:
+… [wallet details array] …
+
+Bob Wallet:
+… [wallet details array] …
+
+Validator Wallet:
+… [wallet details array] …
+
+=== Block #1 ===
+Previous Hash:  000000…0000
+Merkle Root:    0x18a86d42a2a7734a7726ce1dec6df29e201362dc3d2d827b09121d4e60bc7cf2
+Timestamp:      1752675066
+Nonce:          0
+Block Hash:     0x041345fc319c869386e80c2ad64244f2947a47afd2d708cc1cdffc6a7727e7b1
+Validator:      0x8627b0e7c1945421bdba7d7faa2c119c95b1da9b
+Signature:      0x9c1564d5f474e28e40ac95165485d695d4b9…48b71b
+Total Gas Used: 21144 units
+Total Fees:     0.00021144 CB
+Transactions in block (post-filter):
+  [1] 0xab5f…c9e -> 0x609e…09b | Amt: 0.076 | Fee: 0.00021144 | Gas: 21144 | Status: valid
+Block valid? Yes ✅
+
+… 
+
+=== Block #6 ===
+-- Tampering TX #1 to be invalid
+Dropped 1 invalid TX(s) before block proposal
+Previous Hash:  0x0b4430d7de0e5586fd4803051537ae6547f90665199518ae7fd064589e4e
+Merkle Root:    0x6128269e799412b6e4914188bfe88c415c2f6df78cc103285e8e209a1d0feec4
+Timestamp:      1752675073
+Nonce:          0
+Block Hash:     0x7a6ed3a16a6914b7f7c0fea07a631036fcc643080b9aa37c2b66365525fbefb6
+Validator:      0x8627b0e7c1945421bdba7d7faa2c119c95b1da9b
+Signature:      0x05b3062e569575e04c2630b31c6dd6e4aedddf4717fffc4426f09ce8a204baa055fe94ea2a87dcad455e576b7aeddf66d6684921e37e79ae6f484c98d56ed2161b
+Total Gas Used: 42336 units
+Total Fees:     0.00042336 CB
+Transactions in block (post-filter):
+  [2] 0x609e…09b -> 0xab5f…c9e | Amt: 0.079 | Fee: 0.00021208 | Gas: 21208 | Status: valid
+  [3] 0xab5f…c9e -> 0x609e…09b | Amt: 0.045 | Fee: 0.00021128 | Gas: 21128 | Status: valid
+Block valid? Yes ✅
 ```
-⛓️  Creating new blockchain…
-� Generating wallets…
-➕ Generating blocks with random signed transactions…
-[2025-07-16 10:06:05][info] ✅ Block #0x721aa… added.
-[2025-07-16 10:06:06][info] ✅ Block #0x44e2fe… added.
-[2025-07-16 10:06:07][info] ✅ Block #0x028429… added.
 
-📃 Block Summary:
-Block #0
-  Hash      : 0x721aa45165af6…
-  Prev Hash : 0
-  TX Count  : 5
-  Nonce     : 285
-  Timestamp : 2025-07-16 10:06:05
+*(Subsequent blocks follow the same format.)*
 
-… [Block #1 & #2] …
+This output confirms:
 
-✅ Chain Valid? Yes
-```
+* Wallet setup
+* Transaction tampering and filtering
+* Per-block Merkle root, hashing, DPoS signature
+* Gas & fee aggregation
+* Transaction validity
+* Block-level validity checks and chaining.
 
 ---
 

@@ -9,20 +9,24 @@ namespace Chain\Interfaces;
 
 interface BlockInterface
 {
-	public function getHash(): string;
-
 	public function getPreviousHash(): string;
+
+	public function getMerkleRoot(): string;
+
+	public function getHash(): string;
 
 	public function getTimestamp(): int;
 
-	public function getTransactions(): array;
-
-	public function isValid(): bool;
-
 	public function getNonce(): int;
 
-	public function sign(string $privateKey): string;
+	public function getTransactions(): array;
 
-	public function verify(string $publicKey): bool;
+	public function getTotalGasUsedUnits(): int;
+
+	public function getTotalFeesCollected(): string;
+
+	public function isValid(string $prevHash): bool;
+
+	public function toArray(): array;
 
 }
