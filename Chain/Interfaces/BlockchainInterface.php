@@ -9,17 +9,15 @@ declare(strict_types=1);
 
 namespace Chain\Interfaces;
 
-use Chain\Blockchain\Block;
-
 interface BlockchainInterface
 {
 	public function addBlock(BlockInterface $block): bool;
 
-	public function getBlock(int $index): ?Block;
+	public function getBlock(int $index): ?BlockInterface;
 
-	public function getBlockByHash(string $hash): ?Block;
+	public function getBlockByHash(string $hash): ?BlockInterface;
 
-	public function getLatestBlock(): ?Block;
+	public function getLatestBlock(): ?BlockInterface;
 
 	public function getHeight(): int;
 

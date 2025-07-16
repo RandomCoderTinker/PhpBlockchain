@@ -212,7 +212,33 @@ Test creating of 3 blocks and adding then to the blockchain.
 
 ```php
 Expected Output:
+⛓️  Creating new blockchain...
+➕ Adding blocks...
+[2025-07-16 09:56:03][info] ✅ Block #0xb1419b5fb15b27a05a4e07eb8079853f9c3427d9f8095968f6dbfe23d062acfd added.
+[2025-07-16 09:56:03][info] ✅ Block #0xe984f259c8fee902130d554bdd116e3627f344aed1e71453c572c36d8758f54c added.
+[2025-07-16 09:56:03][info] ✅ Block #0x6ae2eff10cc53d385bf8998a11b9555d7c373401cf77d34ad783bb03434acd34 added.
 
-Currently working on this test.
+� Block Summary:
+Block #0
+  Hash         : 0xb1419b5fb15b27a05a4e07eb8079853f9c3427d9f8095968f6dbfe23d062acfd
+  Prev Hash    : 0
+  TX Count     : 1
+  Nonce        : 808
+  Timestamp    : 2025-07-16 09:56:03
 
+Block #1
+  Hash         : 0xe984f259c8fee902130d554bdd116e3627f344aed1e71453c572c36d8758f54c
+  Prev Hash    : 0xb1419b5fb15b27a05a4e07eb8079853f9c3427d9f8095968f6dbfe23d062acfd
+  TX Count     : 1
+  Nonce        : 382
+  Timestamp    : 2025-07-16 09:56:03
+
+Block #2
+  Hash         : 0x6ae2eff10cc53d385bf8998a11b9555d7c373401cf77d34ad783bb03434acd34
+  Prev Hash    : 0xe984f259c8fee902130d554bdd116e3627f344aed1e71453c572c36d8758f54c
+  TX Count     : 1
+  Nonce        : 726
+  Timestamp    : 2025-07-16 09:56:03
+
+✅ Chain Valid? Yes
 ```

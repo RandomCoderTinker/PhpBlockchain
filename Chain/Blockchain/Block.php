@@ -10,13 +10,11 @@ declare(strict_types=1);
 namespace Chain\Blockchain;
 
 use Chain\Utils\Hex;
-use kornrunner\Keccak;
 use Chain\Cryptography\MerkleTree;
 use Chain\Interfaces\BlockInterface;
 
 class Block implements BlockInterface
 {
-
 	public int $index;
 	public int $timestamp;
 	public array $transactions;
@@ -28,7 +26,8 @@ class Block implements BlockInterface
 	public function __construct(
 		int    $index,
 		array  $transactions,
-		string $previousHash)
+		string $previousHash
+	)
 	{
 		$this->index = $index;
 		$this->transactions = $transactions;
@@ -36,16 +35,12 @@ class Block implements BlockInterface
 		$this->timestamp = time();
 		$this->nonce = random_int(0, 1000);
 
-		// 1) Build Merkle root over raw Transaction objects
 		$this->calculateMerkleRoot();
-
-		// 2) Compute header hash from index,timestamp,roots,nonce,gas…
 		$this->calculateHash();
 	}
 
 	private function calculateMerkleRoot(): void
 	{
-		// MerkleTree now accepts Transaction instances directly
 		$merkle = new MerkleTree($this->transactions);
 		$this->merkleRoot = $merkle->getRoot();
 	}
@@ -68,46 +63,50 @@ class Block implements BlockInterface
 		];
 	}
 
-	/*** Interface implementation ***/
+	// --- Interface Implementation ---
 
 	public function getHash(): string
 	{
-		// TODO: Implement getHash() method.
+		return $this->hash;
 	}
 
 	public function getPreviousHash(): string
 	{
-		// TODO: Implement getPreviousHash() method.
+		return $this->previousHash;
 	}
 
 	public function getTimestamp(): int
 	{
-		// TODO: Implement getTimestamp() method.
+		return $this->timestamp;
 	}
 
 	public function getTransactions(): array
 	{
-		// TODO: Implement getTransactions() method.
+		return $this->transactions;
 	}
 
 	public function isValid(): bool
 	{
-		// TODO: Implement isValid() method.
+		$expectedHash = Hex::hashArray($this->getSigningPayload());
+
+		return $this->hash === $expectedHash;
 	}
 
 	public function getNonce(): int
 	{
-		// TODO: Implement getNonce() method.
+		return $this->nonce;
 	}
 
 	public function sign(string $privateKey): string
 	{
-		// TODO: Implement sign() method.
+		// You can swap this for real Signature::sign()
+		return '0xSignedBlockPlaceholder';
 	}
 
 	public function verify(string $publicKey): bool
 	{
-		// TODO: Implement verify() method.
+		// Swap with Signature::verify() for real usage
+		return TRUE;
 	}
 
 }

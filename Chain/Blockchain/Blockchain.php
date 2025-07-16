@@ -15,12 +15,9 @@ use Chain\Interfaces\BlockchainInterface;
 
 class Blockchain implements BlockchainInterface
 {
-
 	private array $chain = [];
 
-	public function __construct()
-	{
-	}
+	public function __construct() { }
 
 	public function getAllBlocks(): array
 	{
@@ -29,46 +26,71 @@ class Blockchain implements BlockchainInterface
 
 	public function addBlock(BlockInterface $block): bool
 	{
-		// Check if the block is valid
 		if (!$this->isBlockValid($block)) {
-			Logger::getInstance()->error("Block is invalid");
+			Logger::getInstance()->error("❌ Block is invalid.");
 
 			return FALSE;
 		}
+
 		$this->chain[] = $block;
+		Logger::getInstance()->info("✅ Block #{$block->getHash()} added.");
 
 		return TRUE;
 	}
 
 	private function isBlockValid(BlockInterface $block): bool
 	{
-		// @todo implement this
-		return TRUE;
+		$latest = $this->getLatestBlock();
+		if ($latest && $block->getPreviousHash() !== $latest->getHash()) {
+			Logger::getInstance()->warning("Block previous hash mismatch.");
+
+			return FALSE;
+		}
+
+		return $block->isValid();
 	}
 
-	public function getBlock(int $index): ?Block
+	public function getLatestBlock(): ?BlockInterface
 	{
-		// TODO: Implement getBlock() method.
-	}
-
-	public function getBlockByHash(string $hash): ?Block
-	{
-		// TODO: Implement getBlockByHash() method.
-	}
-
-	public function getLatestBlock(): ?Block
-	{
-		// TODO: Implement getLatestBlock() method.
-	}
-
-	public function getHeight(): int
-	{
-		// TODO: Implement getHeight() method.
+		return end($this->chain) ?: NULL;
 	}
 
 	public function isValid(): bool
 	{
-		// TODO: Implement isValid() method.
+		for ($i = 1; $i < count($this->chain); $i++) {
+			$prev = $this->chain[$i - 1];
+			$curr = $this->chain[$i];
+
+			if ($curr->getPreviousHash() !== $prev->getHash()) {
+				return FALSE;
+			}
+			if (!$curr->isValid()) {
+				return FALSE;
+			}
+		}
+
+		return TRUE;
+	}
+
+	public function getBlock(int $index): ?BlockInterface
+	{
+		return $this->chain[$index] ?? NULL;
+	}
+
+	public function getBlockByHash(string $hash): ?BlockInterface
+	{
+		foreach ($this->chain as $block) {
+			if ($block->getHash() === $hash) {
+				return $block;
+			}
+		}
+
+		return NULL;
+	}
+
+	public function getHeight(): int
+	{
+		return count($this->chain);
 	}
 
 }
