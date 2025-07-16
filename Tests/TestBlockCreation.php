@@ -61,7 +61,6 @@ for ($b = 1; $b <= $blockCount; $b++) {
 		if (rand(1, 100) <= 10) {
 			echo "-- Tampering TX #" . ($i + 1) . " to be invalid\n";
 			$refProp = (new ReflectionClass($tx))->getProperty('signature');
-			$refProp->setAccessible(TRUE);
 			$refProp->setValue($tx, '0x' . bin2hex(random_bytes(65)));
 		}
 		$candidates[] = $tx;
